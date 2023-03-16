@@ -3,5 +3,5 @@ WORKDIR /usr/src/app/client
 COPY package*.json ./
 RUN npm install
 COPY . .
-EXPOSE 5000s
+EXPOSE 5000
 CMD [ "npm", "start" ]
