@@ -27,7 +27,7 @@ services:
     networks:
       - yolo-project-network
     depends_on:
-      - server
+      - backend
 networks:
   yolo-project-network:
     driver: bridge
