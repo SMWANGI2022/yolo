@@ -12,6 +12,7 @@ services:
     ports:
       - "27017:27017"
   backend:   
+    tty: true
     image: docker.io/susanmwangi/yolo-backend:0.0.0
     ports:
       - "5000:5000"
@@ -19,15 +20,17 @@ services:
     environment:
       MONGO_URL: mongodb://127.0.0.1:27017/mydb
     networks:
-      - yolo-project-network
+      - yolo-network
   client:
+    tty: true
     image: docker.io/susanmwangi/yolo-client:0.0.1
     ports:
       - "3000:3000"
     networks:
-      - yolo-project-network
+      - yolo-network
     depends_on:
       - backend
 networks:
-  yolo-project-network:
+ yolo-network:
+    name: yolo-network
     driver: bridge
