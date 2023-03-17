@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   db:
-    image: docker-node-mongo
+    image: mongo
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
