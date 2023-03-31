@@ -12,8 +12,22 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
-  config.vm.box = "bento/ubuntu-22.04"
-
+  config.vm.box = "generic/ubuntu2204"
+  #config.vm.hostname = "bionic"
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "playbook.yml"
+  end
+  # Frontent Application server
+  config.vm.define "client" do |app|
+    app.vm.hostname = "client"
+    app.vm.network :private_network, ip: "192.168.60.4"
+  end
+    # Backend Application server
+  config.vm.define "backend" do |app|
+    app.vm.hostname = "backend"
+    app.vm.network :private_network, ip: "192.168.60.5"
+    end
+  #config.vm.network "private_network", ip: "192.168.62.101"
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
@@ -30,10 +44,6 @@ Vagrant.configure("2") do |config|
   # via 127.0.0.1 to disable public access
   # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
 
-  # Create a private network, which allows host-only access to the machine
-  # using a specific IP.
-  # config.vm.network "private_network", ip: "192.168.33.10"
-
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
   # your network.
@@ -49,25 +59,17 @@ Vagrant.configure("2") do |config|
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
   #
-  # config.vm.provider "virtualbox" do |vb|
+  config.vm.provider "virtualbox" do |vb|
   #   # Display the VirtualBox GUI when booting the machine
   #   vb.gui = true
   #
   #   # Customize the amount of memory on the VM:
-  #   vb.memory = "2048"
-  # end
+     vb.memory = "2048"
+   end
   #
   # View the documentation for the provider you are using for more
   # information on available options.
 
   # Enable provisioning with a shell script. Additional provisioners such as
-  # Ansible, Chef, Docker, Puppet and Salt are also available. Please see the
-  # documentation for more information about their specific syntax and use.
-  # config.vm.provision "shell", inline: <<-SHELL
-  #   apt-get update
-  #   apt-get install -y apache2
-  # Provisioning configuration for Ansible.
-  config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "playbook.yml"
+  # Puppet, Chef, Ansible, Salt, and Docker are
   end
-end 

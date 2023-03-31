@@ -1,0 +1,119 @@
+---
+- name: Setup development environment
+  hosts: all
+  become: true
+  vars:
+    default_container_name: docker
+    default_container_image: ubuntu
+    NODEJS_VERSION: "14"  
+
+    roles:
+    - common
+    - docker
+    - nodejs
+    - mongodb
+    - backend
+
+    - client  tags:
+    - setup
+    - common
+    - docker
+    - nodejs
+    - mongodb
+    - backend
+    - client  
+
+  tasks:
+   
+    - name: Install required system packages
+      apt:
+        pkg:
+          - python3-pip
+          - virtualenv
+          - python3-setuptools
+          - ca-certificates
+          - curl
+          - software-properties-common
+        state: latest
+      
+      tags:
+        - setup
+        - common   
+
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+      tags:
+        - docker   
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
+      tags:
+        - docker  
+        
+    - name: Update apt and install docker-ce
+      apt:
+        name: docker-ce
+        state: latest
+        update_cache: true
+      tags:
+        - docker   
+
+    - name: Install Docker Module for Python
+      pip:
+        name: docker
+      tags:
+        - docker    
+
+    - name: Clone Git repository
+      git:
+        repo: "https://github.com/SMWANGI2022/yolo"
+        dest: "/home/ubuntu/Desktop/yolo"
+      tags:
+        - backend  
+
+    - name: Install the nodejs
+      apt:
+        name: nodejs
+        state: present
+      tags:
+        - nodejs 
+
+    - name: Start MongoDB container
+      become: true
+      docker_container:
+        name: mongodb
+        image: mongo
+        ports:
+          - "2701:2701"
+        volumes:
+          - ./data:/data/db
+      tags:
+        - mongodb  
+
+    - name: Start Backend container
+      become: true
+      docker_container:
+        name: backend
+        image: susanmwangi/yolo-backend:0.0.0
+        command: npm start
+        state: present
+        ports:
+          - "5000:5000"
+      tags:
+        - backend   
+
+    - name: Start client container
+      become: true
+      docker_container:
+        name: client
+        image: susanmwangi/yolo-client:0.0.
+        command: npm start
+        state: present
+        ports:
+          - "3000:3000"
+      tags:
+        - client
