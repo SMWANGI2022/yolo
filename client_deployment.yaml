@@ -1,0 +1,40 @@
+---
+
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: client
+  labels:
+    appName: yolo
+    serverClass : client
+    memoryOptimised : "yes"
+    component: client
+  annotations:
+    description: "Deployment for client application"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      appName : yolo
+      memoryOptimised : "yes" 
+      app: yoloclient
+      component: client
+  template:
+    metadata:
+      labels:
+        appName : yolo
+        memoryOptimised : "yes"
+        app: yoloclient
+        component: client
+    spec:
+    containers:
+        - name: client
+          image: susanmwangi/yolo-client:0.0.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000              
+          env:
+            - name: CLIENT_HOST
+              value: "10.24.7.108"
+            - name: CLIENT_PORT
+              value: "5000"
